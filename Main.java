@@ -54,8 +54,15 @@ public class Main {
                     morti[j].deaths = "999";
                 }
             }
+
+            for (int j = 0; j < i; j++) {
+                if (morti[j].year.equals("2025") &&
+                        morti[j].state.equals("IT")) {
+                    morti[j].cancellato = "true";
+                }
+            }
         }
-    catch (IOException e) {}
-            System.out.println("Errore nella lettura del file: " + e.getMessage());
-        }
+        catch (IOException e) {}
+            System.out.println("Errore nella lettura del file: " + e);
+    }
 }
