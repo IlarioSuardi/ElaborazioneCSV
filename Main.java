@@ -76,7 +76,8 @@ public class Main {
             bw.close();
             fw.close();
         }
-        catch (IOException e) {}
-            System.out.println("Errore nella lettura del file: " + e);
+        catch (IOException e) {
+            System.out.println("Errore: " + e);
+        }
     }
 }
