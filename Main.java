@@ -21,7 +21,15 @@ public class Main {
             fr.close();
 
             if (i > 0) {
-                System.out.println("numero di campi: " + morti[0].toCSV().split(",").length);
+                System.out.println("Numero di Campi: " + morti[0].toCSV().split(",").length);
             }
+
+            int max =0;
+            for (int j = 0; j < i; j++) {
+                if (morti[j].toCSV().length() > max) {
+                    max = morti[j].toCSV().length();
+                }
+            }
+            System.out.println("Lunghezza Massima: " + max);
     }
 }
