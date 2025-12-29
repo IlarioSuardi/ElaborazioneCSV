@@ -61,6 +61,20 @@ public class Main {
                     morti[j].cancellato = "true";
                 }
             }
+
+            FileWriter fw = new FileWriter("output.csv");
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            bw.write("Year,Cause113,CauseName,State,Deaths,Rate,MioValore,Cancellato");
+            bw.newLine();
+
+            for (int j = 0; j < i; j++) {
+                bw.write(String.format("%-120s", morti[j].toCSV()));
+                bw.newLine();
+            }
+
+            bw.close();
+            fw.close();
         }
         catch (IOException e) {}
             System.out.println("Errore nella lettura del file: " + e);
