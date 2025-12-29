@@ -19,5 +19,9 @@ public class Main {
 
             br.close();
             fr.close();
+
+            if (i > 0) {
+                System.out.println("numero di campi: " + morti[0].toCSV().split(",").length);
+            }
     }
 }
