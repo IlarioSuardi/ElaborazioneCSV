@@ -26,7 +26,7 @@ public class Main {
             }
 
             int max = 0;
-            for (int j = 0; j < i; j++) {
+            for (int j=0; j < i; j++) {
                 if (morti[j].toCSV().length() > max) {
                     max = morti[j].toCSV().length();
                 }
@@ -39,8 +39,7 @@ public class Main {
                 );
             }
 
-        } catch (IOException e) {
-            System.out.println("Errore: " + e);
-        }
+            morti[i]=new Morte(new String[]{"2020","001","Cause Name","State","1000","10.0"});
+            i++;
     }
 }
