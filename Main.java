@@ -16,5 +16,8 @@ public class Main {
                 morti[i] = new morte(campi);
                 i++;
             }
+
+            br.close();
+            fr.close();
     }
 }
