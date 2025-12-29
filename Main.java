@@ -41,5 +41,21 @@ public class Main {
 
             morti[i]=new Morte(new String[]{"2020","001","Cause Name","State","1000","10.0"});
             i++;
-    }
+
+            for (int j=0; j < i; j++) {
+                if(morti[j].year.equals("2010") && morti[j].state.equals("California")) {
+                    System.out.println("Record trovato: " + morti[j].toCSV());
+                }
+            }
+
+            for (int j = 0; j < i; j++) {
+                if (morti[j].year.equals("2025") &&
+                        morti[j].state.equals("IT")) {
+                    morti[j].deaths = "999";
+                }
+            }
+        }
+    catch (IOException e) {}
+            System.out.println("Errore nella lettura del file: " + e.getMessage());
+        }
 }
