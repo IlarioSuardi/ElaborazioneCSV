@@ -1,80 +1,103 @@
 import java.io.*;
 
 public class Main {
+
+    public static String[] parseCSV(String line) {
+        String[] campi = new String[50];
+        int index = 0;
+        boolean virgolette = false;
+        String campo = "";
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == '"') {
+                virgolette = !virgolette;
+            } else if (c == ',' && !virgolette) {
+                campi[index++] = campo;
+                campo = "";
+            } else {
+                campo += c;
+            }
+        }
+        campi[index++] = campo;
+
+        String[] risultato = new String[index];
+        for (int i = 0; i < index; i++) {
+            risultato[i] = campi[i].replace("\"", "").trim();
+        }
+        return risultato;
+    }
+
     public static void main(String[] args) {
 
+        Morte[] morti = new Morte[1000];
+        int n = 0;
+
         try {
-            String inputPath = "C:\\Users\\ilari\\OneDrive\\Desktop\\suardi.csv"
-                    ;
-            FileReader fr = new FileReader(inputPath);
-            BufferedReader br = new BufferedReader(fr);
+            BufferedReader br = new BufferedReader(new FileReader("suardi.csv"));
+            br.readLine();
 
-            Morte[] morti = new Morte[1000];
-            int i = 0;
-
-            String line = br.readLine();
-
-            while ((line = br.readLine()) != null && i < morti.length) {
-                String[] campi = line.split(",");
-                morti[i] = new Morte(campi);
-                i++;
+            String line;
+            while ((line = br.readLine()) != null && n < morti.length) {
+                String[] campi = parseCSV(line);
+                if (campi.length >= 6) {
+                    morti[n++] = new Morte(campi);
+                }
             }
-
             br.close();
-            fr.close();
 
-            if (i > 0) {
-                System.out.println("Numero di campi: " + morti[0].toCSV().split(",").length);
-            }
+            //numero campi
+            System.out.println("Numero campi: " + morti[0].toCSV().split(",").length);
 
+            //lunghezza massima
             int max = 0;
-            for (int j = 0; j < i; j++) {
-                if (morti[j].toCSV().length() > max) {
-                    max = morti[j].toCSV().length();
+            for (int i = 0; i < n; i++) {
+                if (morti[i].toCSV().length() > max) {
+                    max = morti[i].toCSV().length();
                 }
             }
             System.out.println("Lunghezza massima record: " + max);
 
-            System.out.println("\nANNO  STATO  DECESSI");
-            for (int j = 0; j < 5 && j < i; j++) {
-                System.out.println(morti[j].year + " " + morti[j].state + " " + morti[j].deaths);
+            //visualizza 3 campi
+            System.out.println("\nANNO | STATO | DECESSI");
+            for (int i = 0; i < 5; i++) {
+                System.out.println(morti[i].year + " | " +
+                        morti[i].state + " | " +
+                        morti[i].deaths);
             }
 
-            morti[i] = new Morte(new String[]{"2020", "001", "Cause Name", "State", "1000", "10.0"});
-            i++;
+            //aggiunta record
+            morti[n++] = new Morte(new String[]{
+                    "2025","001","TEST","IT","999","9.9"
+            });
 
-            for (int j = 0; j < i; j++) {
-                if (morti[j].year.equals("2010") && morti[j].state.equals("California")) {
-                    System.out.println("Record trovato: " + morti[j].toCSV());
+            //ricerca
+            for (int i = 0; i < n; i++) {
+                if (morti[i].year.equals("2010")) {
+                    System.out.println("TROVATO: " + morti[i].toCSV());
                 }
             }
 
-            for (int j = 0; j < i; j++) {
-                if (morti[j].year.equals("2025") && morti[j].state.equals("IT")) {
-                    morti[j].deaths = "999";
-                    morti[j].cancellato = "true";
-                }
-            }
+            //modifica
+            morti[0].deaths = "123";
 
-            String outputPath = "C:\\Users\\ilari\\OneDrive\\Desktop\\output.csv";
-            FileWriter fw = new FileWriter(outputPath);
-            BufferedWriter bw = new BufferedWriter(fw);
+            //cancellazione logica
+            morti[1].cancellato = "true";
 
+            //scrittura output
+            BufferedWriter bw = new BufferedWriter(new FileWriter("output.csv"));
             bw.write("Year,Cause113,CauseName,State,Deaths,Rate,MioValore,Cancellato");
-            bw.newLine();
-
-            for (int j = 0; j < i; j++) {
-                bw.write(morti[j].toCSV());
+            for (int i = 0; i < n; i++) {
+                bw.write(morti[i].toCSV());
                 bw.newLine();
             }
-
             bw.close();
-            fw.close();
 
-            System.out.println("File scritto correttamente in: " + outputPath);
+            System.out.println("\nFINE");
 
-        } catch (IOException e) {
-            System.out.println("Errore: " + e);
+        } catch (Exception e) {
+            System.out.println("ERRORE: " + e.getMessage());
         }
     }
 }

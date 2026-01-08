@@ -15,7 +15,7 @@ public class Morte {
         this.state = campi[3];
         this.deaths = campi[4];
         this.rate = campi[5];
-        this.mioValore = (int) (Math.random() * 11) + 10;
+        this.mioValore = (int)(Math.random() * 11) + 10;
         this.cancellato = "false";
     }
 
