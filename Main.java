@@ -1,103 +1,92 @@
 import java.io.*;
 
 public class Main {
-
-    public static String[] parseCSV(String line) {
-        String[] campi = new String[50];
-        int index = 0;
-        boolean virgolette = false;
-        String campo = "";
-
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-
-            if (c == '"') {
-                virgolette = !virgolette;
-            } else if (c == ',' && !virgolette) {
-                campi[index++] = campo;
-                campo = "";
-            } else {
-                campo += c;
-            }
-        }
-        campi[index++] = campo;
-
-        String[] risultato = new String[index];
-        for (int i = 0; i < index; i++) {
-            risultato[i] = campi[i].replace("\"", "").trim();
-        }
-        return risultato;
-    }
-
     public static void main(String[] args) {
-
-        Morte[] morti = new Morte[1000];
+        Morte[] morti = new Morte[2000];
         int n = 0;
+        int[] maxPerCampo = new int[6];
 
         try {
             BufferedReader br = new BufferedReader(new FileReader("suardi.csv"));
-            br.readLine();
+            String header = br.readLine();
 
-            String line;
-            while ((line = br.readLine()) != null && n < morti.length) {
-                String[] campi = parseCSV(line);
+            String riga;
+            while ((riga = br.readLine()) != null && n < morti.length) {
+
+                String[] campi = riga.split(",");
+
                 if (campi.length >= 6) {
-                    morti[n++] = new Morte(campi);
+
+                    for (int i = 0; i < 6; i++) {
+                        int lunghezzaAttuale = campi[i].length();
+                        if (lunghezzaAttuale > maxPerCampo[i]) {
+                            maxPerCampo[i] = lunghezzaAttuale;
+                        }
+                    }
+
+                    morti[n] = new Morte(campi);
+                    n++;
                 }
             }
             br.close();
 
-            //numero campi
-            System.out.println("Numero campi: " + morti[0].toCSV().split(",").length);
+            //1.Numero campi
+            System.out.println("Numero campi: " + (6 + 2));
 
-            //lunghezza massima
-            int max = 0;
+            //2.Lunghezza massima record e campi
+            int maxRecord = 0;
             for (int i = 0; i < n; i++) {
-                if (morti[i].toCSV().length() > max) {
-                    max = morti[i].toCSV().length();
-                }
+                int lunghezza = morti[i].toCSV().length();
+                if (lunghezza > maxRecord) maxRecord = lunghezza;
             }
-            System.out.println("Lunghezza massima record: " + max);
+            System.out.println("Lunghezza massima record: " + maxRecord);
+            System.out.print("Lunghezza massima per ogni campo: ");
+            for(int m : maxPerCampo) System.out.print(m + " ");
+            System.out.println();
 
-            //visualizza 3 campi
+            //3.Visualizzazione 3 campi significativi
             System.out.println("\nANNO | STATO | DECESSI");
-            for (int i = 0; i < 5; i++) {
-                System.out.println(morti[i].year + " | " +
-                        morti[i].state + " | " +
-                        morti[i].deaths);
+            for (int i = 0; i < n; i++) {
+                System.out.println(morti[i].year + " | " + morti[i].state + " | " + morti[i].deaths);
             }
 
-            //aggiunta record
-            morti[n++] = new Morte(new String[]{
-                    "2025","001","TEST","IT","999","9.9"
-            });
-
-            //ricerca
+            //4.Ricerca record per campo
+            String stato = "California";
+            System.out.println("\nRicerca per stato: " + stato);
             for (int i = 0; i < n; i++) {
-                if (morti[i].year.equals("2010")) {
-                    System.out.println("TROVATO: " + morti[i].toCSV());
+                if (morti[i].state.equalsIgnoreCase(stato)) {
+                    System.out.println(morti[i].toCSV());
+                    break;
                 }
             }
 
-            //modifica
-            morti[0].deaths = "123";
+            //5.Aggiunta record in coda
+            if (n < morti.length) {
+                morti[n++] = new Morte(new String[]{"2025","001","TEST CAUSE","ITALY","999","9.9"});
+            }
 
-            //cancellazione logica
-            morti[1].cancellato = "true";
+            //6.Modifica e Cancellazione logica
+            morti[0].deaths = "12345";
+            if (n > 1) morti[1].cancellato = "true";
 
-            //scrittura output
+            //7.Scrittura CSV con record a dimensione fissa
             BufferedWriter bw = new BufferedWriter(new FileWriter("output.csv"));
-            bw.write("Year,Cause113,CauseName,State,Deaths,Rate,MioValore,Cancellato");
+            String formatoriga = "%-10s %-60s %-30s %-25s %-12s %-10s %-10s %-10s";
+            bw.write(String.format(formatoriga, "ANNO", "CAUSA_113", "NOME_CAUSA", "STATO", "DECESSI", "RATE", "MIO_VAL", "CANC LOGICA"));
+            bw.newLine();
+
             for (int i = 0; i < n; i++) {
-                bw.write(morti[i].toCSV());
+                String rigaFissa = String.format(formatoriga, morti[i].year, morti[i].cause113, morti[i].causeName, morti[i].state, morti[i].deaths, morti[i].rate, morti[i].mioValore, morti[i].cancellato);
+                bw.write(rigaFissa);
                 bw.newLine();
             }
             bw.close();
 
-            System.out.println("\nFINE");
+            System.out.println("\nOPERAZIONE COMPLETATA: File 'output.csv' generato con record a dimensione fissa.");
 
         } catch (Exception e) {
             System.out.println("ERRORE: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -1,4 +1,6 @@
-public class Morte {
+import java.io.*;
+
+class Morte {
     public String year;
     public String cause113;
     public String causeName;
